@@ -4,6 +4,7 @@
 #include <queue>
 #include <string>
 
+// TODO: Modify this
 #define MAX_M 50000
 #define MAX_N 2000
 #define MEMSET_63 1061109567
@@ -89,6 +90,14 @@ public:
     int getMincost() const {
         return mincost;
     }
+
+    int getNumOfUsed(int n) {
+        int j = tot - 1, ans = 0;
+        for (int i = 0; i < n; i++, j -= 4) {
+            ans += e[j].c;
+        }
+        return ans;
+    }
 };
 
 
@@ -122,11 +131,13 @@ void deploy_server(char *topo[MAX_EDGE_NUM], int line_num, char *filename) {
 
     cost = serverCost;
     for (int i = 0; i < n; i++) {
-        G.addEdge(s, i, INF, cost);
+        G.addEdge(s, i, INF, 0);
+        G.addEdge(s, i, 1, -cost);
     }
 
     G.MCFP(s, t, N);
-    printf("%d\t%d\n", G.getMaxflow(), G.getMincost());
+    printf("%d\n%d + %d * %d = %d\n", G.getMaxflow(), G.getMincost(), G.getNumOfUsed(n), cost,
+           G.getMincost() + G.getNumOfUsed(n) * cost);
 
     write_result(str.c_str(), filename);
 }
